@@ -1,0 +1,74 @@
+input[type="text"]:focus
+{
+    box-shadow:0 0 0 .2rem rgb(49, 197, 49);
+}
+
+body
+{
+    /*background: url(messageBG.jpg);*/
+    /*background-size: 20%;*/
+}
+
+#wrap {
+    background-size: 20%;
+}
+
+.messBG
+{
+    background: rgb(44,44,44);
+    color:white;
+}
+
+.border-2
+{
+    border-width:2px !important;
+}
+
+.row-14
+{
+    height: 14%;
+}
+.row-auto
+{
+    height: 50%;
+}
+
+.btn-outline-success
+{
+    color:white;
+}
+
+.word-wrap
+{
+    word-wrap: break-word;
+}
+
+.w-60
+{
+    width: 60%;
+}
+.overflow
+{
+    overflow-y: scroll;
+    height: 100%;
+}
+.overflow::-webkit-scrollbar { width: 0; }
+
+.drop
+{
+    color:white;
+}
+.drop:hover
+{
+    color:#218838;
+    /* rgb(49, 197, 49) */
+}
+.dropItem
+{
+    color:white;
+}
+.dropItem:hover
+{
+    background-color:#218838;
+    color:white;
+}

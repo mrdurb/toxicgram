@@ -1,0 +1,15 @@
+#intro
+{
+    display:none;
+}
+
+body {
+    height: 100vh;
+}
+
+#wrap
+{
+    background: center no-repeat fixed ;
+    background-size: 50%;
+    height: 100%;
+}
