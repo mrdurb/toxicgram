@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Chat;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -33,25 +34,24 @@ class UserController extends Controller
 
     /**
      * @param User $user
+     * @param Chat $chat
      * @return JsonResponse
      */
-    public function getUsers(User $user)
+    public function getUsers(User $user, Chat $chat)
     {
         $userChats = $user->chats;
-        $users[] = $user;
+        $usersId = [];
+
+        $alreadyExistsUsers = $chat->usersM->pluck('id')->toArray();
 
         foreach ($userChats as $userChat) {
-            $users = array_merge($users, $userChat->usersM->toArray());
+            $usersId = array_unique(array_merge($usersId, $userChat->usersM->pluck('id')->toArray()));
         }
 
-//        $users = array_unique($users);
+        $usersId = array_diff($usersId, $alreadyExistsUsers);
 
-        foreach ($users as $key => $item) {
-            if ($item['id'] == Auth::user()->id) {
-                unset($users[$key]);
-            }
-        }
+        $users = $this->userRepository->findAllById($usersId)->get()->toArray();
 
-        return response()->json($users);
+        return response()->json($users ?? []);
     }
 }

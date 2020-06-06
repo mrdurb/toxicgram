@@ -1,5 +1,5 @@
 <?php
-//    $chat = 1;
+use Carbon\Carbon;
 ?>
 @extends('layouts.app')
 
@@ -9,6 +9,7 @@
 
 @section('content')
     <div id="wrap" style="background-image: url({{ asset('images/messageBG.jpg') }})">
+
         <div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-sm" >
                 <div class="modal-content" style="color:white;background: rgb(61, 61, 61);">
@@ -20,19 +21,19 @@
                                         <h5 class="modal-title">Выберите собеседников</h5>
                                     </div>
                                 </div>
-                                <form>
+                                <form id="addUsersToChat">
+                                    <input type="hidden" name="chat_id">
                                     <div class="row">
                                         <div class="col py-2">
                                             <label for="selectUsers">Выберите пользователя/ей</label>
-                                            <select multiple class="form-control" id="selectUsers" style="color:white;background: rgb(61, 61, 61);">
-                                                <option>1</option>
-                                                <option>2</option>
+                                            <select name="user_id[]" multiple class="form-control" id="selectUsers"
+                                                    style="color:white;background: rgb(61, 61, 61);" required>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="row float-right">
                                         <div class="col">
-                                            <button type="submit" class="btn btn-success ">Подтвердить</button>
+                                            <button type="submit" class="btn btn-success">Подтвердить</button>
                                         </div>
                                     </div>
                                 </form>
@@ -56,17 +57,17 @@
                                 </div>
                                 <div class="row">
                                     <div class="col my-1">
-                                        <i class="fas fa-at">Имя</i>
+                                        <i class="fas fa-at">{{ Auth::user()->name }}</i>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col my-1">
-                                        <i class="far fa-envelope"> E-mail</i>
+                                        <i class="far fa-envelope"> {{ Auth::user()->email }}</i>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col my-1">
-                                        <i class="far fa-clock">Дата регистрации </i>
+                                        <i class="far fa-clock"> {{Carbon::parse(Auth::user()->created_at)->format('d.m.Y')}}</i>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -77,41 +78,56 @@
                                 <div class="row">
                                     <div class="col my-1">
                                         <div class="btn-group">
-                                            <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <button type="button" class="btn btn-success dropdown-toggle" id="pickChatBtn"
+                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                 Выберите беседу
                                             </button>
                                             <div class="dropdown-menu" style="background: rgb(61, 61, 61);">
-                                                <a class="dropdown-item dropItem" href="#">Стас</a>
+                                                @foreach(Auth::user()->chats as $chat)
+                                                    <button class="dropdown-item dropItem chatList" data-chat-id="{{ $chat->id }}"
+                                                            onclick="getStatistic($(this))">{{ $chat->name }}
+                                                    </button>
+                                                @endforeach
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col my-1">
-                                        <div class="font-weight-bold">
-                                            <i class="far fa-clock"></i>Дата первого сообщения: 1123123123
+                                <div id="statisticBlock" class="d-none">
+                                    <div class="row">
+                                        <div class="col my-1">
+                                            <div class="font-weight-bold" id="firstMessage">
+                                                <i class="far fa-clock"></i>Дата первого сообщения: 1123123123
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col my-1">
-                                        <div class="font-weight-bold">
-                                            <i class="far fa-clock"></i>Дата последнего сообщения: 1
+                                    <div class="row">
+                                        <div class="col my-1">
+                                            <div class="font-weight-bold" id="lastMessage">
+                                                <i class="far fa-clock"></i>Дата последнего сообщения: 1
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col my-1">
-                                        <div class="font-weight-bold">
-                                            Количество сообщений:
+                                    <div class="row">
+                                        <div class="col my-1">
+                                            <div class="font-weight-bold" id="messageCount">
+                                                Количество сообщений:
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Закрыть</button>
+                    <div class="modal-footer border-0">
+                        <button type="button" class="btn btn-danger"
+                                onclick="event.preventDefault();
+                                         document.getElementById('logout-form').submit();">
+                                Выход
+                        </button>
+
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
                     </div>
                 </div>
             </div>
@@ -163,7 +179,7 @@
                                                     @else
                                                         <span class="badge badge-success">{{ $userChat['lastMessage']->user->name }}</span>
                                                     @endif
-                                                    <span id="lastMessageContent">{{$userChat['lastMessage']->content}}</span>
+                                                    <span id="lastMessageContent_{{$userChat['id']}}">{{$userChat['lastMessage']->content}}</span>
                                                 </div>
                                             @endif
                                         </div>
@@ -186,7 +202,8 @@
                     <!-- Профиль -->
 
                 </div>
-                <div class="col-6 border-right border-top border-bottom border-success border-2 messBG" id="chatArea">
+                <div class="col-6 border-right border-top border-bottom border-success border-2 messBG"
+                     id="chatArea" style="max-height:100vh">
                 <!-- Название беседы -->
                     <span id="chatContent" class="d-none">
                         <div class="row" style="height: 10%;">
@@ -200,7 +217,7 @@
                                     <i class="fas fa-ellipsis-h fa-2x float-right mt-3 drop" role="button" id="dropdownMenuButton"
                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <button class="dropdown-item" role="button"
+                                        <button class="dropdown-item" role="button" data-chat-id="" id="addUserToChatBtn"
                                            data-target=".bd-example-modal-sm" onclick="addUserModal(this)">Добавить собеседника</button>
 {{--                                        <a class="dropdown-item" href="#">Что то еще</a>--}}
                                     </div>
@@ -219,7 +236,7 @@
                                 <form id="messageSendForm" action="{{route('message_store')}}" method="post">
                                     <input type="text" class="d-none" name="user_id" value="">
                                     <input type="text" class="d-none" name="chat_id" value="">
-                                    <input type="text" class="form-control " placeholder="Напишите сообщение"
+                                    <input type="text" class="form-control " placeholder="Напишите сообщение" autocomplete="off"
                                            aria-label="Напишите сообщение" aria-describedby="basic-addon1" name="content">
                                     <button type="submit" class="d-none"></button>
                                 </form>
@@ -253,21 +270,67 @@
                         data: $(this).serialize(),
 
                         success: function (data) {
+                            console.log(data);
                             $('#messageBox').prepend(`
-                                <div class="row mb-2 word-wrap">
-                                    <div class="col">
-                                        <span class="float-right">${data['content']}</span>
+                                <div class="row mb-2 word-wrap justify-content-end">
+                                    <div class="col-5 mr-2 text-right">
+                                        <span>${data['content']}</span>
                                     </div>
                                 </div>
                             `);
                             $('input[name="content"]').val('');
-                            $('#lastMessageContent').html(data['content']);
+                            $(`#lastMessageContent_${data['chat_id']}`).html(data['content']);
                         },
                         error: function (data) {
                             console.log(data);
                         }
                     });
                 }
+            });
+
+            $('#addUsersToChat').on('submit', function (e) {
+                e.preventDefault();
+
+                $.ajax({
+                    type: 'POST',
+                    url: `chat/add-users`,
+                    data: $(this).serialize(),
+
+                    success: function (data) {
+                        console.log($(this).serializeArray(), data);
+
+                        $('#messageBox').prepend(`
+                            <div class="row mb-2 word-wrap">
+                                <div class="col">
+                                    <span class="float-right">Пригласил ${data.toString()}</span>
+                                </div>
+                            </div>
+                        `);
+
+                        $('.bd-example-modal-sm').modal('toggle');
+
+                        $.ajax({
+                            type: 'POST',
+                            url: `/message/send`,
+                            data: {
+                                'user_id': '{{Auth::user()->id}}',
+                                'content': `Пригласил ${data.toString()}`,
+                                'chat_id': $('input[name="chat_id"]').val()
+                            },
+
+                            success: function (data) {
+                                console.log(data);
+                                $(`#lastMessageContent_${data['chat_id']}`).html(data['content']);
+                            },
+                            error: function (data) {
+                                console.log(data);
+                            }
+                        });
+                    },
+                    error: function (data) {
+                        console.log(data);
+                    }
+                })
             });
         });
 
@@ -295,6 +358,31 @@
         $(':not(#dropDownMenu)').on('click', function () {
             $('.userSearch-dropdown').dropdown('hide');
         });
+
+        function getStatistic(btn_chat) {
+            let chat_id = btn_chat.data('chat-id');
+            $.ajax({
+                type: 'GET',
+                url: `chat/${chat_id}/get-user-stat/{{Auth::user()->id}}`,
+
+                success: function (data) {
+                    $('.chatList.active').removeClass('active');
+                    btn_chat.addClass('active');
+
+                    $('#firstMessage').html(`<i class="far fa-clock"></i> ${data['first_message']}`);
+                    $('#lastMessage').html(`<i class="far fa-clock"></i> ${data['last_message']}`);
+                    $('#messageCount').html(`Количество сообщений: ${data['message_count']}`);
+
+                    $('#statisticBlock').removeClass('d-none');
+
+                    // console.log(data);
+                },
+
+                error: function (data) {
+                    console.log(data);
+                }
+            })
+        }
 
         function startChat(user) {
             $.ajax({
@@ -359,7 +447,7 @@
                         if (user_id == _this['user']['id']) {
                             $('#messageBox').prepend(`
                                 <div class="row mb-2 word-wrap justify-content-end">
-                                    <div class="col-auto mr-2">
+                                    <div class="col-5 mr-2 text-right">
                                         <span>${_this['content']}</span>
                                     </div>
                                 </div>
@@ -367,7 +455,7 @@
                         } else {
                             $('#messageBox').prepend(`
                                 <div class="row mb-2 word-wrap">
-                                    <div class="col-auto">
+                                    <div class="col-5">
                                         <span class="badge badge-success font-weight-bold">${_this['user']['name']}</span>
                                         <span>${_this['content']}</span>
                                     </div>
@@ -375,6 +463,7 @@
                             `);
                         }
                     });
+                    $('#addUserToChatBtn').data('chat-id', chat_id);
                 },
                 error: function (data) {
                     console.log(data);
@@ -385,25 +474,22 @@
         function addUserModal(_this) {
             $.ajax({
                 type: 'GET',
-                url: '{{route('user_get_users', ['user' => Auth::user()->id])}}',
+                {{--url: '{{route('user_get_users', ['user' => Auth::user()->id])}}',--}}
+                url: `user/{{Auth::user()->id}}/get-users-for-chat/${$(_this).data('chat-id')}`,
 
                 success: function (data) {
                     console.log(data);
-                    let result = [];
-
-                    for(let i in data)
-                        result.push(data [i]);
-
-                    console.log(result);
 
                     let list = $('#selectUsers');
                     list.html(null);
 
-                    result.map(function (_this) {
+                    data.map(function (_this) {
                         list.append(`
                             <option value="${_this['id']}">${_this['name']}</option>
                         `);
                     });
+
+                    $('#addUsersToChat > input[name="chat_id"]').val($(_this).data('chat-id'));
 
                     $('.bd-example-modal-sm').modal('toggle');
 

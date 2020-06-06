@@ -18,4 +18,9 @@ class UserRepository
         return User::where('name', 'LIKE', '%'.$request['search'].'%')->get();
     }
 
+    public function findAllById($id)
+    {
+        return User::whereIn('id', $id);
+    }
+
 }

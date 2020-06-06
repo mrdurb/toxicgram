@@ -8,6 +8,11 @@ use App\Models\Chat;
 
 class ChatRepository
 {
+    public function findById($id)
+    {
+        return Chat::where('id', $id)->first();
+    }
+
     public function findOrCreate($request)
     {
         $chat = Chat::where('users', $request['users'])->first();
