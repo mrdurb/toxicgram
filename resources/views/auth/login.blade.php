@@ -5,8 +5,10 @@
 @endsection
 
 @section('content')
-<div class="container pt-3">
-    <h1 class="text-center mb-3">{{ config('app.name', 'Laravel') }}</h1>
+<div id="wrap" style="background-image: url({{ asset('images/bg.jpg') }})">
+
+    <div class="container pt-3">
+    <h1 class="text-center mb-3" style="color:rgb(49, 197, 49)">{{ config('app.name', 'Toxicgram') }}</h1>
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -54,14 +56,14 @@
                                 </div>
                             </div>
                             <div class="col-md-3 text-right">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-success">
                                     Войти
                                 </button>
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-md-6 offset-md-4 text-right">
-                                <a href="{{ route('register') }}" class="text-primary">
+                                <a href="{{ route('register') }}" class="text-primary" style="color: #218838 !important;">
                                     У вас нет аккаунта? Зарегистрируйтесь!
                                 </a>
                             </div>
@@ -72,7 +74,7 @@
         </div>
     </div>
 </div>
-
+</div>
 {{--<div class="modal fade bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">--}}
 {{--    <div class="modal-dialog modal-dialog-centered modal-sm">--}}
 {{--        <div class="modal-content">--}}

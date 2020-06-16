@@ -13,3 +13,9 @@ body {
     background-size: 50%;
     height: 100%;
 }
+
+.form-control:focus
+{
+    box-shadow:0 0 0 .2rem rgb(49, 197, 49);
+}
+

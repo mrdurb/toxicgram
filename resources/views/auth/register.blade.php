@@ -1,8 +1,14 @@
 @extends('layouts.app')
 
+@section('css-styles')
+    <link rel="stylesheet" href="{{ asset('css/styleLoginForm.css') }}">
+@endsection
+
 @section('content')
-<div class="container pt-3">
-    <h1 class="text-center mb-3">{{ config('app.name', 'Laravel') }}</h1>
+<div id="wrap" style="background-image: url({{ asset('images/bg.jpg') }})">
+
+    <div class="container pt-3">
+    <h1 class="text-center mb-3" style="color:rgb(49, 197, 49)">{{ config('app.name', 'Laravel') }}</h1>
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -64,29 +70,30 @@
 
                         <div class="form-group row mb-0">
                             <div class="col-md-3 offset-md-4">
-                                <a href="{{ route('login') }}" class="text-primary">
+                                <a href="{{ route('login') }}" class="text-primary" style="color: #218838 !important;">
                                    Уже есть аккаунт? Войдите!
                                 </a>
                             </div>
                             <div class="col-3 p-0">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-success">
                                     Зарегстрироваться
                                 </button>
                             </div>
                         </div>
 
 
-{{--                        <div class="form-group row">--}}
-{{--                            <div class="col-md-6 offset-md-4 text-right">--}}
-{{--                                <a href="{{ route('login') }}" class="text-primary">--}}
-{{--                                    У вас уже есть аккаунт? Войдите!--}}
-{{--                                </a>--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
+    {{--                        <div class="form-group row">--}}
+    {{--                            <div class="col-md-6 offset-md-4 text-right">--}}
+    {{--                                <a href="{{ route('login') }}" class="text-primary">--}}
+    {{--                                    У вас уже есть аккаунт? Войдите!--}}
+    {{--                                </a>--}}
+    {{--                            </div>--}}
+    {{--                        </div>--}}
                     </form>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </div>
 @endsection
